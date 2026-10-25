@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrasi Mental Health Day 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  
+  <style>
+    :root { --primary-color: #f2791d; --blue-color: #0288d1; --bg-white: #ffffff; --border-color: #e0e0e0; --text-dark: #333333; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('bg-MHD.jpg') no-repeat center fixed; background-size: cover; color: var(--text-dark); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+    .dashboard-container { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1000px; width: 100%; align-items: flex-start;}
+    .panel { background: var(--bg-white); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); flex: 1; min-width: 320px; overflow: hidden; display: flex; flex-direction: column; }
+    .panel-header { background-color: var(--primary-color); color: white; padding: 15px 20px; font-weight: 600; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+    .panel-header img { height: 28px; }
+    .panel-body { padding: 20px; display: flex; flex-direction: column;}
+    .btn-sync { background-color: #333; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; margin-bottom: 20px; transition: 0.2s; font-size: 0.95rem; }
+    .btn-sync:hover { background-color: #111; }
+    .btn-sync:disabled { background-color: #666; cursor: not-allowed; }
+    #reader { width: 100%; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color); }
+    #reader button { background: var(--primary-color) !important; color: white !important; border: none !important; padding: 8px 12px !important; border-radius: 4px !important; cursor: pointer; font-family: 'Inter', sans-serif;}
+    .guide-mini { background: #f8f9fa; border: 1px solid var(--border-color); border-radius: 6px; padding: 15px; margin-top: 15px; font-size: 0.85rem; color: #444; }
+    .guide-mini strong { color: var(--primary-color); }
+    .guide-mini ol { margin-left: 18px; margin-top: 10px; margin-bottom: 12px; line-height: 1.6; }
+    .alert-mini { color: #842029; background: #f8d7da; padding: 10px; border-radius: 4px; font-weight: 600; text-align: center; font-size: 0.8rem; border: 1px solid #f5c2c7;}
+    .form-review { display: none; background: #fdfdfd; border: 2px dashed var(--primary-color); border-radius: 6px; padding: 15px; margin-bottom: 20px; }
+    .form-review h3 { color: var(--primary-color); margin-bottom: 10px; font-size: 1.1rem;}
+    .scanned-info { font-size: 1.2rem; font-weight: 700; margin-bottom: 5px; color: #111;}
+    .scanned-nim { font-size: 0.9rem; color: #666; margin-bottom: 15px;}
+    .pulang-info-box { display: none; background: #e1f5fe; border-left: 4px solid var(--blue-color); padding: 12px; border-radius: 4px; margin-bottom: 15px; font-size: 0.85rem; line-height: 1.4; }
+    .pulang-info-box strong { color: var(--blue-color); }
+    .input-group { margin-bottom: 15px; }
+    .checkbox-label { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.95rem; cursor: pointer; background: #f0f0f0; padding: 12px; border-radius: 6px; }
+    .checkbox-label input { width: 20px; height: 20px; accent-color: var(--primary-color); }
+    .text-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; resize: vertical; font-family: 'Inter', sans-serif;}
+    .row-dropdown { display: flex; gap: 10px; }
+    .row-dropdown .input-group { flex: 1; }
+    .btn-group { display: flex; gap: 10px; }
+    .btn { flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: 600; font-size: 0.95rem; cursor: pointer; color: white; transition: 0.2s;}
+    .btn-submit { background-color: #198754; } .btn-submit:hover { background-color: #157347; }
+    .btn-cancel { background-color: #dc3545; } .btn-cancel:hover { background-color: #bb2d3b; }
+    .idle-state { text-align: center; color: #888; margin: 30px 0; }
+    .history-box { border-top: 1px solid #eee; padding-top: 15px; }
+    .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;}
+    .history-title { font-size: 0.85rem; font-weight: 600; color: #666; }
+    .btn-clear-history { background: none; border: none; color: #dc3545; font-size: 0.8rem; cursor: pointer; font-weight: 600; padding: 4px 8px; border-radius: 4px;}
+    .history-content { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; }
+    .history-content::-webkit-scrollbar { width: 5px; }
+    .history-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+    .history-item { background: #eef; padding: 10px; border-radius: 6px; border-left: 4px solid var(--primary-color); font-size: 0.85rem; }
+    .history-item.pulang { background: #e3f2fd; border-left-color: var(--blue-color); }
+    .history-item.error { background: #f8d7da; border-left-color: #dc3545; }
+    .history-time { font-weight: bold; margin-right: 5px;}
+    .history-empty { text-align: center; color: #999; font-size: 0.85rem; font-style: italic; margin-top: 10px; }
+    .blur-scanner { filter: blur(4px) grayscale(50%); pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="panel">
+      <div class="panel-header">
+        <img src="lg-MSU.png" alt="Logo"> Pindai QR Code
+      </div>
+      <div class="panel-body">
+        <button class="btn-sync" id="btn-sync" onclick="syncData()">🔄 Sinkronisasi Data SPS (Klik Sebelum Mulai)</button>
+        <div id="reader"></div>
+        
+        <div class="guide-mini">
+          <div style="font-size: 0.95rem; margin-bottom: 8px;"><strong>📖 SOP Pengurus Registrasi:</strong></div>
+          <ol>
+            <li><strong>Tahap Persiapan:</strong> Wajib klik tombol Sinkronisasi sebelum mulai sesi Datang maupun Pulang.</li>
+            <li><strong>Tahap Pemindaian:</strong> Arahkan QR ke kamera. Sistem otomatis mendeteksi status peserta.</li>
+            <li><strong>Tahap Verifikasi:</strong> Pastikan Nama/NIM sesuai.</li>
+            <li><strong>Tahap Eksekusi:</strong> Klik <strong>Kirim Data</strong>. Layar kembali ke kamera seketika untuk pemindaian tanpa jeda.</li>
+          </ol>
+          <div class="alert-mini">⚠️ Jika terjadi lag parah, segera beralih catat manual di Google Sheet SPS!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header" style="background-color: #333;">Verifikasi & Riwayat</div>
+      <div class="panel-body">
+        
+        <div class="idle-state" id="idle-state"><p>Sistem Siap. Menunggu pindaian kamera...</p></div>
+
+        <div class="form-review" id="form-review">
+          <h3 id="form-title">Konfirmasi Kedatangan</h3>
+          <div class="scanned-info" id="display-nama">-</div>
+          <div class="scanned-nim" id="display-nim">-</div>
+          
+          <div class="pulang-info-box" id="box-pulang-info">
+            <strong>Jurusan/Prodi:</strong> <span id="display-jurusan-prodi"></span><br>
+            <strong>Kedatangan:</strong> <span id="display-waktuD"></span><br>
+            <strong>Catatan Awal:</strong> <span id="display-noteD"></span>
+          </div>
+          
+          <div class="row-dropdown" id="box-prodi-jurusan" style="display: none;">
+            <div class="input-group">
+              <select id="input-prodi" class="text-input" onchange="updateJurusan()">
+                 <option value="">-- Pilih Prodi --</option>
+                 <option value="MAN">MAN</option>
+                 <option value="IMT">IMT</option>
+                 <option value="VCD">VCD</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <select id="input-jurusan" class="text-input">
+                 <option value="">-- Pilih Jurusan --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-group" id="group-ticket">
+            <label class="checkbox-label"><input type="checkbox" id="input-ticket"> Kosongkan Ini</label>
+          </div>
+          <div class="input-group">
+            <textarea id="input-note" class="text-input" rows="2" placeholder="Catatan Khusus (Opsional)..."></textarea>
+          </div>
+          
+          <div class="btn-group">
+            <button class="btn btn-cancel" onclick="batalkanScan()">Batal</button>
+            <button class="btn btn-submit" id="btn-kirim" onclick="submitData()">Kirim Data</button>
+          </div>
+        </div>
+
+        <div class="history-box">
+          <div class="history-header">
+             <div class="history-title">Riwayat Perangkat Ini:</div>
+             <button class="btn-clear-history" onclick="clearHistory()">🗑️ Bersihkan</button>
+          </div>
+          <div class="history-content" id="history-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ⚠️ MASUKKAN URL APPS SCRIPT ANDA DI SINI
+    const urlGoogleScript = "https://script.google.com/macros/s/AKfycbwGuPUAJfRv64LtAuRQs60Hi-X6ewkMFIZ7has5v28SBfjqVKA-_h6EAZFPkvlGputu/exec";
+
+    let isProcessing = false;
+    let isSubmitting = false; 
+    let qrDataSementara = ""; 
+    let namaSementara = "";
+    let nimSementara = "";
+    
+    let lastScannedNim = "";
+    let lastScannedTime = 0;
+
+    const formReview = document.getElementById('form-review');
+    const idleState = document.getElementById('idle-state');
+    const readerDiv = document.getElementById('reader');
+    const historyContainer = document.getElementById('history-container');
+
+    let localDB = JSON.parse(localStorage.getItem('dbInfinity')) || {};
+    let historyList = JSON.parse(localStorage.getItem('absensiHistory')) || [];
+
+    const jurusanMap = { "MAN": ["IBM", "CBM", "DBM", "BMM", "TAX"], "IMT": ["AD", "AI"], "VCD": ["GD", "ILX", "DMD"] };
+
+    function updateJurusan() {
+      const prodiVal = document.getElementById('input-prodi').value;
+      const jurSelect = document.getElementById('input-jurusan');
+      jurSelect.innerHTML = '<option value="">-- Pilih Jurusan --</option>';
+      if (prodiVal && jurusanMap[prodiVal]) {
+          jurusanMap[prodiVal].forEach(j => {
+              let opt = document.createElement('option');
+              opt.value = j; opt.innerText = j; jurSelect.appendChild(opt);
+          });
+      }
+    }
+
+    function syncData() {
+      const btn = document.getElementById('btn-sync');
+      btn.innerText = "⏳ Mengunduh Database SPS...";
+      btn.disabled = true;
+
+      fetch(urlGoogleScript + "?action=sync")
+        .then(r => r.text())
+        .then(text => {
+           if(text.includes("<html") || text.includes("Drive")) throw new Error("Terblokir Sistem Google");
+           const data = JSON.parse(text);
+           localDB = data;
+           localStorage.setItem('dbInfinity', JSON.stringify(data));
+           alert("✅ Berhasil Sinkronisasi.");
+           btn.innerText = "✅ Data SPS Ter-update";
+           setTimeout(() => { btn.innerText = "🔄 Sinkronisasi Data SPS (Klik Sebelum Mulai)"; btn.disabled = false; }, 3000);
+        }).catch(err => {
+           alert("❌ Gagal terhubung ke server.");
+           btn.innerText = "🔄 Coba Sinkronisasi Lagi";
+           btn.disabled = false;
+        });
+    }
+
+    function renderHistory() {
+      if (historyList.length === 0) { historyContainer.innerHTML = "<div class='history-empty'>Belum ada riwayat.</div>"; return; }
+      historyContainer.innerHTML = historyList.map(h => {
+        let isPulang = h.text.includes("Pulang");
+        let isError = h.text.includes("❌");
+        let cls = isError ? "history-item error" : (isPulang ? "history-item pulang" : "history-item");
+        let color = isError ? "#dc3545" : (isPulang ? "var(--blue-color)" : "var(--primary-color)");
+        return `<div class="${cls}"><span class="history-time" style="color:${color}">[${h.time}]</span> ${h.text}</div>`;
+      }).join('');
+    }
+
+    function addHistory(text) {
+      let now = new Date().toLocaleTimeString('id-ID', { hour12: false });
+      historyList.unshift({ time: now, text: text }); 
+      localStorage.setItem('absensiHistory', JSON.stringify(historyList)); renderHistory();
+    }
+
+    function clearHistory() {
+      if(confirm("Yakin ingin menghapus semua riwayat di layar ini?")){
+        localStorage.removeItem('absensiHistory'); historyList = []; renderHistory();
+      }
+    }
+    renderHistory();
+
+    function onScanSuccess(decodedText, decodedResult) {
+      if (isProcessing) return;
+      
+      let dataPecah = decodedText.split('+');
+      if (dataPecah.length < 3) { alert("❌ QR Code Ditolak. Format salah."); return; }
+
+      let nim = dataPecah[0].trim();
+
+      if (nim === lastScannedNim && (Date.now() - lastScannedTime < 5000)) return;
+
+      isProcessing = true; 
+      qrDataSementara = decodedText;
+      namaSementara = dataPecah[1] || "Peserta";
+      nimSementara = nim;
+      
+      idleState.style.display = 'none';
+      formReview.style.display = 'none';
+      readerDiv.classList.add('blur-scanner'); 
+
+      let person = localDB[nimSementara];
+
+      if (!person || person.rgsD !== true) {
+          setupUI_Datang(namaSementara, nimSementara, !person);
+      } else if (person.rgsP !== true) {
+          setupUI_Pulang(namaSementara, nimSementara, person.waktuD, person.note, person.jurusan, person.prodi);
+      } else {
+          alert("⚠️ Peserta " + namaSementara + " sudah absen pulang!");
+          batalkanScan();
+      }
+    }
+
+    function setupUI_Datang(nama, nim, isBaru) {
+      document.getElementById('form-title').innerText = isBaru ? "Konfirmasi Datang (Peserta Baru)" : "Konfirmasi Kedatangan";
+      document.getElementById('form-title').style.color = "var(--primary-color)";
+      document.getElementById('display-nama').innerText = nama;
+      document.getElementById('display-nim').innerText = "NIM: " + nim;
+      document.getElementById('box-pulang-info').style.display = 'none';
+      document.getElementById('group-ticket').style.display = 'block'; 
+      document.getElementById('box-prodi-jurusan').style.display = isBaru ? 'flex' : 'none';
+      document.getElementById('input-prodi').value = "";
+      document.getElementById('input-jurusan').innerHTML = '<option value="">-- Pilih Jurusan --</option>';
+      formReview.style.borderStyle = "dashed"; formReview.style.borderColor = "var(--primary-color)";
+      document.getElementById('input-ticket').checked = false;
+      document.getElementById('input-note').value = ""; document.getElementById('input-note').placeholder = "Catatan Datang (Opsional)...";
+      formReview.style.display = 'block';
+    }
+
+    function setupUI_Pulang(nama, nim, waktuD, noteD, jurusan, prodi) {
+      document.getElementById('form-title').innerText = "Konfirmasi Kepulangan";
+      document.getElementById('form-title').style.color = "var(--blue-color)";
+      document.getElementById('display-nama').innerText = nama;
+      document.getElementById('display-nim').innerText = "NIM: " + nim;
+      document.getElementById('box-pulang-info').style.display = 'block';
+      let infoJP = (jurusan && prodi) ? `${jurusan} (${prodi})` : "Belum ada terdata";
+      document.getElementById('display-jurusan-prodi').innerText = infoJP;
+      document.getElementById('display-waktuD').innerText = waktuD || "-";
+      document.getElementById('display-noteD').innerText = noteD || "-";
+      document.getElementById('group-ticket').style.display = 'none'; 
+      document.getElementById('box-prodi-jurusan').style.display = 'none';
+      formReview.style.borderStyle = "solid"; formReview.style.borderColor = "var(--blue-color)";
+      document.getElementById('input-note').value = ""; document.getElementById('input-note').placeholder = "Catatan Pulang (Opsional, otomatis digabung)...";
+      formReview.style.display = 'block';
+    }
+
+    function batalkanScan() {
+      formReview.style.display = 'none';
+      idleState.style.display = 'block';
+      readerDiv.classList.remove('blur-scanner');
+      isProcessing = false; 
+    }
+
+    function submitData() {
+      // Fitur Antrean: Cegah tombol bekerja ganda jika terklik dua kali
+      if (isSubmitting) return; 
+      isSubmitting = true;
+
+      const isTicket = document.getElementById('input-ticket').checked;
+      const noteVal = document.getElementById('input-note').value;
+      const pProdi = document.getElementById('input-prodi').value;
+      const pJurusan = document.getElementById('input-jurusan').value;
+      const nama = namaSementara;
+      const nimKey = nimSementara.trim();
+
+      const reqId = Date.now().toString(); 
+      const submitUrl = urlGoogleScript 
+        + "?action=submit&data=" + encodeURIComponent(qrDataSementara) 
+        + "&ticket=" + isTicket 
+        + "&prodi=" + encodeURIComponent(pProdi) 
+        + "&jurusan=" + encodeURIComponent(pJurusan)
+        + "&note=" + encodeURIComponent(noteVal)
+        + "&reqId=" + reqId;
+
+      lastScannedNim = nimKey;
+      lastScannedTime = Date.now(); 
+      
+      let prevState = localDB[nimKey] ? JSON.parse(JSON.stringify(localDB[nimKey])) : null;
+      let historyText = "";
+
+      // 1. UPDATE MEMORI & SIAPKAN TEKS RIWAYAT (Optimistic Logic)
+      if (!localDB[nimKey]) {
+         localDB[nimKey] = { rgsD: true, waktuD: "Baru saja", rgsP: false, note: noteVal, jurusan: pJurusan, prodi: pProdi };
+         historyText = "✅ Datang: " + nama;
+      } else if (!localDB[nimKey].rgsD) {
+         localDB[nimKey].rgsD = true; localDB[nimKey].note = noteVal;
+         historyText = "✅ Datang: " + nama;
+      } else {
+         localDB[nimKey].rgsP = true;
+         historyText = "👋 Pulang: " + nama;
+      }
+      
+      localStorage.setItem('dbInfinity', JSON.stringify(localDB));
+
+      // 2. MUNCULKAN RIWAYAT SECARA INSTAN! (Tanpa nunggu server Google)
+      addHistory(historyText);
+
+      // 3. TUTUP FORM SEKETIKA
+      batalkanScan(); 
+
+      // 4. BUKA GEMBOK TOMBOL DALAM 0.5 DETIK
+      // Ini memungkinkan panitia men-scan orang berikutnya dengan kecepatan penuh!
+      setTimeout(() => { isSubmitting = false; }, 500);
+
+      // 5. KIRIM DATA KE GOOGLE DI LATAR BELAKANG
+      fetch(submitUrl)
+        .then(response => response.text())
+        .then(hasil => {
+          // Tidak perlu cetak riwayat lagi di sini karena sudah instan
+          if (hasil.includes("<html") || hasil.toLowerCase().includes("google drive")) {
+             throw new Error("Terblokir Sistem Google");
+          }
+        })
+        .catch(error => {
+          // Hanya jika gagal total, memori di-rollback dan panitia diberitahu
+          if (prevState) localDB[nimKey] = prevState; else delete localDB[nimKey];
+          localStorage.setItem('dbInfinity', JSON.stringify(localDB));
+          addHistory("❌ GAGAL (Cek Internet): " + nama);
+        });
+    }
+
+    var html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false);
+    html5QrcodeScanner.render(onScanSuccess);
+  </script>
+</body>
+</html>
